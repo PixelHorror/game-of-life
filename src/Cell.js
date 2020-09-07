@@ -3,18 +3,32 @@ export default class Cell {
     this.height = size;
     this.width = size;
 
+    // Allow only one cell per coordinate step.
     this.x = this.width * coords.x;
     this.y = this.height * coords.y;
 
     this.canvas = canvas;
     this.setDead();
     this.willDie = true;
+    this.setDefaultTimeDead();
 
     this.neighbors = [];
   }
 
   isAlive() {
     return this.alive;
+  }
+
+  resetTimeDead() {
+    this.timeDead = 0;
+  }
+
+  setTimeDead(value) {
+    this.timeDead = value;
+  }
+
+  setDefaultTimeDead() {
+    this.setTimeDead(5);
   }
 
   isDead() {
@@ -24,18 +38,27 @@ export default class Cell {
   setAlive() {
     this.alive = true;
     this.color = '#d4ee9f';
+    this.resetTimeDead();
   }
 
   setDead() {
     this.alive = false;
-    this.color = '#7b9f35';
+
+    if (this.timeDead >= 0 && this.timeDead < 4) {
+      this.color = '#a5c663';
+    } else {
+      this.color = '#354f00';
+    }
+
+    this.timeDead++;
   }
 
   setNeighbors(neighbors) {
     this.neighbors = neighbors;
   }
 
-  setFuture() {
+  // First, calculate wether the cell will live or die on the future generation.
+  updateFutureState() {
     const alive = this.neighbors.filter(n => n.isAlive()).length;
 
     if (this.isAlive() && alive === 2 || alive === 3) {
@@ -47,16 +70,19 @@ export default class Cell {
     }
   }
 
+  // Taking the precalculated values, update the state and render it
   handleGenerationPass(canvas) {
     this.willDie ? this.setDead() : this.setAlive();
+
     this.render(canvas);
   }
 
   render(canvas) {
-    const context = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
 
-    context.fillStyle = this.color;
-    context.fillRect(
+    ctx.fillStyle = this.color;
+    ctx.linecap = 'round';
+    ctx.fillRect(
       this.x,
       this.y,
       this.width,
@@ -65,6 +91,8 @@ export default class Cell {
   }
 
   toggle() {
+    this.setDefaultTimeDead();
+
     this.isDead() ? this.setAlive() : this.setDead();
   }
 }

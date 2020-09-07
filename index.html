@@ -12,6 +12,7 @@
     html {
       box-sizing: border-box;
       font-size: 16px;
+      background: beige;
     }
 
     *, *:before, *:after {
@@ -47,14 +48,40 @@
       width: 640px;
       height: 640px;
       image-rendering: pixelated;
+      display: block;
+    }
+
+    button {
+      margin: 1em 0;
+    }
+
+    article {
+      display: flex;
+    }
+
+    .generation {
+      margin-left: auto;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
+  <h1>Conway's Game of Life</h1>
   <canvas></canvas>
+  <article>
+    <div class="instructions">
+      <h2>Instructions:</h2>
+      <p>Draw a pattern and hit "Start".</p>
+      <button>Start</button>
+    </div>
+    <div class="generation">
+      <h3></h3>
+    </div>
+  </article>
 
-  <button>Start</button>
-
+  <article>
+    <p>More info at <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Wikipedia</a></p>
+  </article>
   <script type="module" src="./src/Cell.js"></script>
   <script type="module" src="./src/World.js"></script>
   <script type="module" src="./src/main.js"></script>

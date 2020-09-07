@@ -10,16 +10,19 @@ export default class World {
     this.fill();
   }
 
+  // Called everytime a new generation arrives, updates all the future states
+  // and renders them as well.
   advanceGeneration(globalState, canvas) {
     if (globalState.isRunning()) {
       this.generation++;
 
       const allCells = this.getFlat();
-      allCells.forEach(c => c.setFuture());
+      allCells.forEach(c => c.updateFutureState());
       allCells.forEach(c => c.handleGenerationPass(canvas));
     }
   }
 
+  // Builds the initial state of the matrix and sets neighbors per cell.
   fill() {
     for (let h = 0; h < this.size; h++) {
       let level = [];
@@ -73,9 +76,5 @@ export default class World {
   toggleAt(x, y) {
     const cell = this.getAt(x, y);
     cell.toggle();
-  }
-
-  killAll() {
-    this.getFlat().forEach(c => c.setDead());
   }
 }
