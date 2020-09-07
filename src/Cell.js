@@ -1,3 +1,6 @@
+/**
+ * Cell representation with two possible states: dead/alive.
+ */
 export default class Cell {
     constructor(coords, size, canvas) {
     this.height = size;

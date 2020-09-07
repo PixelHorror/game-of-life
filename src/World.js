@@ -1,5 +1,8 @@
 import Cell from './Cell.js';
 
+/**
+ * Holds all the cells' state, coordinates generations and other stuff
+ */
 export default class World {
   constructor(worldSize, cellSize) {
     this.size = worldSize / cellSize;
