@@ -1,19 +1,14 @@
 export default class Cell {
-    set state(state) {
-      this.alive = state;
-      this.color = state ? 'black' : 'white';
-      this.render();
-    }
-
-    constructor(coords, size, canvas, alive = false) {
+    constructor(coords, size, canvas) {
     this.height = size;
     this.width = size;
 
     this.x = this.width * coords.x;
     this.y = this.height * coords.y;
 
-    this.canvas = canvas
-    this.state = alive;
+    this.canvas = canvas;
+    this.setDead();
+    this.willDie = true;
 
     this.neighbors = [];
   }
@@ -27,19 +22,38 @@ export default class Cell {
   }
 
   setAlive() {
-    this.state = true;
+    this.alive = true;
+    this.color = '#d4ee9f';
   }
 
   setDead() {
-    this.state = false;
+    this.alive = false;
+    this.color = '#7b9f35';
   }
 
   setNeighbors(neighbors) {
     this.neighbors = neighbors;
   }
 
-  render() {
-    const context = this.canvas.getContext('2d');
+  setFuture() {
+    const alive = this.neighbors.filter(n => n.isAlive()).length;
+
+    if (this.isAlive() && alive === 2 || alive === 3) {
+      this.willDie = false;
+    } else if (this.isDead() && alive === 3) {
+      this.willDie = false;
+    } else {
+      this.willDie = true;
+    }
+  }
+
+  handleGenerationPass(canvas) {
+    this.willDie ? this.setDead() : this.setAlive();
+    this.render(canvas);
+  }
+
+  render(canvas) {
+    const context = canvas.getContext('2d');
 
     context.fillStyle = this.color;
     context.fillRect(
@@ -50,15 +64,7 @@ export default class Cell {
     );
   }
 
-  handleGenerationPass() {
-    const alive = this.neighbors.filter(n => n.isAlive()).length;
-
-    if (this.isAlive() && alive === 2 || alive === 3) {
-      this.willDie = false;
-    } else if (this.isDead() && alive === 3) {
-      this.willDie = false;
-    } else {
-      this.willDie = true;  
-    }
+  toggle() {
+    this.isDead() ? this.setAlive() : this.setDead();
   }
 }
